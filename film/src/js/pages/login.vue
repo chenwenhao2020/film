@@ -49,7 +49,8 @@
                     _this.loginText = "登录成功";
 
                     this.$router.open({
-                        name: 'Hello',
+                        name: resData.url,
+                        params: resData.name,
                     })
                 }, error => {
                     // 错误回调

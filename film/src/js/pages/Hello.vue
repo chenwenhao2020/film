@@ -5,7 +5,7 @@
                 @wxcTabBarCurrentTabSelected="wxcTabBarCurrentTabSelected">
         <!-- 第一个页面内容-->
         <div class="item-container" :style="contentStyle" ref="pageTitle">
-            <list>
+            <list :style="listStyle">
                 <cell>
                     <wxc-ep-slider></wxc-ep-slider>
                     <recommend></recommend>
@@ -38,15 +38,6 @@
         align-items: center;
         justify-content: center;
     }
-    .scroller {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 9;
-    }
-
 
 </style>
 <script>
@@ -70,19 +61,23 @@
             WxcButton,
             'recommend': Recommend,
             },
+
         data: () => ({
             tabTitles: Config.tabTitles,
             tabStyles: Config.tabStyles,
+            listStyle: { height: 1330 + 'px' },
+            user_name: '',
         }),
         created () {
+            _this = this;
             const tabPageHeight = env.deviceHeight / env.deviceWidth * 750;
             // 如果页面没有导航栏，可以用下面这个计算高度的方法
             // const tabPageHeight = env.deviceHeight / env.deviceWidth * 750;
             const { tabStyles } = this;
             this.contentStyle = { height: (tabPageHeight - tabStyles.height) + 'px' };
-
-
-
+            this.$router.getParams().then(resData => {
+                _this.user_name = resData
+            })
         },
         methods: {
             wxcTabBarCurrentTabSelected (e) {

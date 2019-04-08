@@ -14,11 +14,14 @@
 
     <category title="热门"></category>
     <div class='wrap-row'>
-      <div v-for='(item, index) in lists' :key='index' class='cell'>
-            <div class="item">
-                <text>{{item}}</text>
-            </div>
-        </div>
+      <div v-for='(v, index) in hot' :key='index' class='cell'>
+          <div class="item">
+            <text v-if="v.titleCn" class="itemName">{{v.titleCn}}</text>
+            <image class="itemPhoto" :src=v.coverPath></image>
+            <text v-if="v.titleEn" class="itemDesc">{{v.titleEn}}</text>
+            <text v-if="v.actorNameCn1" class="itemClickBehaviour"> {{v.actorNameCn1}}</text>
+          </div>
+      </div>
     </div>
   </div>
 </template>
@@ -86,39 +89,23 @@
         lists: ['a', 'b', 'c'],
         user: [],
         hot: [],
-        items: [
-        {
-          src:'https://gw.alicdn.com/tps/TB1Jl1CPFXXXXcJXXXXXXXXXXXX-370-370.jpg',
-          name: 'Thomas Carlyle',
-          desc:'Genius only means hard-working all one\'s life',
-          behaviourName: 'Change width',
-          behaviour: 'changeColumnWidth',
-        },
-        {
-          src:'https://gw.alicdn.com/tps/TB1Hv1JPFXXXXa3XXXXXXXXXXXX-370-370.jpg',
-          desc:'The man who has made up his mind to win will never say "impossible "',
-          name: 'Thomas Carlyle',
-          behaviourName: 'Change gap',
-          behaviour: 'changeColumnGap'
-        },
-        {
-          src:'https://gw.alicdn.com/tps/TB1eNKuPFXXXXc_XpXXXXXXXXXX-370-370.jpg',
-          desc:'There is no such thing as a great talent without great will - power',
-          name: 'Thomas Carlyle',
-          behaviourName: 'Change count',
-          behaviour: 'changeColumnCount'
-        },
-        {
-          src:'https://gw.alicdn.com/tps/TB1DCh8PFXXXXX7aXXXXXXXXXXX-370-370.jpg',
-          name:'Addison',
-          desc:'Cease to struggle and you cease to live',
-          behaviourName: 'Show scrollbar',
-          behaviour: 'showScrollbar',
-        },
-      ]
+        recommend: [],
       }),
       created () {
+          var _this = this;
+          this.$fetch({
+              method: 'GET',    // 大写
+              url: 'http://111.231.204.71:5000/Hot',        
+          }).then(resData => {
+              // 成功回调
+              _this.hot = resData
+            
+              console.log(JSON.stringify(resData))
+          }, error => {
+              // 错误回调
 
+              console.log(error)
+          })
       },
       methods: {
         
