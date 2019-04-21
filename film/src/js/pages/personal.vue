@@ -1,62 +1,25 @@
 <template>
   <div class="container">
     <div class="demo">
-      <text class="demo-title">列表list展示</text>
-
-      <wxc-cell label="标题"
-                title="Weex Ui"
-                :has-arrow="true"
-                @wxcCellClicked="wxcCellClicked"
-                :has-margin="true"></wxc-cell>
-
-      <wxc-cell label="标题"
-                title="带链接"
-                :has-arrow="true"
-                link="https://h5.m.taobao.com/trip/home/index.html"
-                @wxcCellClicked="wxcCellClicked"
-                spm="181.12312312.12312.d01"
-                :has-top-border="false"></wxc-cell>
-
-      <wxc-cell label="标题"
-                title="Weex Ui"
-                :has-arrow="true"
-                @wxcCellClicked="wxcCellClicked"
-                :has-top-border="false"></wxc-cell>
-
-    </div>
-    <div class="demo">
-      <text class="demo-title">不配置label</text>
-      <wxc-cell title="标题"
-                :has-arrow="true"
-                @wxcCellClicked="wxcCellClicked"
-                :has-top-border="true"></wxc-cell>
-    </div>
-
-    <div class="demo">
-      <text class="demo-title">配置附加信息</text>
-      <wxc-cell title="标题"
-                desc="这里是附加信息"
-                :has-arrow="true"
-                @wxcCellClicked="wxcCellClicked"
-                :has-top-border="true"></wxc-cell>
-    </div>
-
-    <div class="demo">
-      <text class="demo-title">不显示箭头</text>
-      <wxc-cell title="标题"
-                :has-arrow="false"
-                @wxcCellClicked="wxcCellClicked"
-                :has-top-border="true"></wxc-cell>
-    </div>
-    <div class="demo">
-      <text class="demo-title">自定义子元素</text>
-      <wxc-cell title="这里是标题"
-                :has-arrow="false"
-                :has-top-border="true">
-        <switch slot="value"></switch>
-      </wxc-cell>
+        
+        <wxc-cell :has-arrow="false"
+            :cell-style="cellStyle"
+            :has-top-border="false"
+            :auto-accessible="false"
+            >
+          <image class="image"
+                 slot="label"
+                 :src='head_portrait'></image>
+          <text class="red"
+                slot="title">{{my_user.name}}
+          </text>
+          <text class="red"
+                slot="title">{{my_user.phone}}
+          </text>
+        </wxc-cell>
     </div>
   </div>
+
 </template>
 
 <style scoped>
@@ -80,8 +43,8 @@
     color: #C3413D;
   }
   .image {
-    width: 80px;
-    height: 80px;
+    width: 160px;
+    height: 160px;
     margin-right: 20px;
   }
   .demo-title {
@@ -97,6 +60,17 @@
   import { WxcCell } from 'weex-ui';
   export default {
     components: { WxcCell },
+    data: () => ({
+      my_user: [],
+      head_portrait: '',
+    }),
+    watch: {
+        user: function (Val) {
+          this.my_user = Val[0];
+          this.head_portrait= 'http://www.chenwenhao97.cn/user_img/' + this.my_user.head_portrait
+        }
+    },
+    props: ['user'],
     methods: {
       wxcCellClicked (e) {
         console.log(e)

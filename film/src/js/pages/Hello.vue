@@ -4,29 +4,28 @@
                 title-type="icon"
                 @wxcTabBarCurrentTabSelected="wxcTabBarCurrentTabSelected">
         <!-- 第一个页面内容-->
-        <div class="item-container" :style="contentStyle" ref="pageTitle">
+        <div class="item-container" :style="contentStyle" ref="pageTitle" >
             <list :style="listStyle">
                 <cell>
-                    <wxc-ep-slider></wxc-ep-slider>
-                    <recommend></recommend>
-                    <wxc-button class="btn-250" text="show eros" @wxcButtonClicked="showEros"></wxc-button>
+                    <wxc-ep-slider :user=user></wxc-ep-slider>
+                    <recommend :user=user></recommend>
                 </cell>
             </list>
         </div>
 
         <!-- 第二个页面内容-->
         <div class="item-container" :style="contentStyle">
-            <wxc-tab-page></wxc-tab-page>
+            <wxc-tab-page :tab_name=tab_name :user=user></wxc-tab-page>
         </div>
 
         <!-- 第三个页面内容-->
         <div class="item-container" :style="contentStyle">
-            <wxc-searchbar></wxc-searchbar>
+            <wxc-searchbar :tab_name=tab_name></wxc-searchbar>
         </div>
 
         <!-- 第四个页面内容-->
         <div class="item-container" :style="contentStyle">
-            <wxc-cell></wxc-cell>
+            <wxc-cell :user=user></wxc-cell>
         </div>
     </wxc-tab-bar>
 </template>
@@ -41,7 +40,7 @@
 
 </style>
 <script>
-    import { WxcTabBar, Utils, WxcButton} from 'weex-ui'
+    import { WxcTabBar, Utils } from 'weex-ui'
     import WxcEpSlider  from './shouye.vue'
     import WxcCell from './personal.vue'
     import WxcSearchbar from './search.vue'
@@ -58,7 +57,6 @@
             WxcSearchbar,
             WxcTabPage,
             WxcCell,
-            WxcButton,
             'recommend': Recommend,
             },
 
@@ -67,27 +65,52 @@
             tabStyles: Config.tabStyles,
             listStyle: { height: 1330 + 'px' },
             user_name: '',
+            user: {},
+            tab_name: '123',
         }),
         created () {
-            _this = this;
+            var _this = this;
+            // 获取 login传来的登录用户名
+            this.$router.getParams().then(resData => {
+                this.user_name = resData
+
+                // 获取 user 
+                this.$fetch({
+                    method: 'GET',    // 大写
+                    url: 'http://111.231.204.71:5000/GetUser',
+                    data: {
+                        name: this.user_name,
+                    },
+                }).then(resData => {
+                    // 成功回调
+                    var o
+                    // _this.user = str(resData.user) 
+                    // eval("var o = " + resData.user);
+                    _this.user = resData
+                    
+                    console.log(JSON.stringify(resData))
+                }, error => {
+                    // 错误回调
+
+                    console.log(error)
+                });
+            })
+
             const tabPageHeight = env.deviceHeight / env.deviceWidth * 750;
             // 如果页面没有导航栏，可以用下面这个计算高度的方法
             // const tabPageHeight = env.deviceHeight / env.deviceWidth * 750;
             const { tabStyles } = this;
             this.contentStyle = { height: (tabPageHeight - tabStyles.height) + 'px' };
-            this.$router.getParams().then(resData => {
-                _this.user_name = resData
-            })
         },
+
         methods: {
             wxcTabBarCurrentTabSelected (e) {
                 const index = e.page;
                 // console.log(index);
-            },
-            showEros() {
-                this.$router.open({
-                    name: 'Login',
-                })
+                if(index == '0') this.tab_name = '首页'
+                if(index == '1') this.tab_name = '排行榜'
+                if(index == '2') this.tab_name = '搜索'
+                if(index == '3') this.tab_name = '个人中心'
             },
         },
     };

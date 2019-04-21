@@ -6,13 +6,13 @@
                    :auto-play='true'
                    :select-index="2"
                    @wxcEpSliderCurrentIndexSelected="wxcEpSliderCurrentIndexSelected">
-
+      
       <!--自动生成demo-->
       <wxc-pan-item v-for="(v,index) in slide_list"
            :key="index"
            :slot="`card${index}_${sliderId}`"
            :class="['slider',`slider${index}`]"
-           @wxcPanItemClicked="wxcPanItemClicked(v, v.titleCn, v.click)"
+           @wxcPanItemClicked="play_clicked(v, v.titleCn, v.click, v.genreTypes, my_user)"
            :accessible="true">
           <text>{{v.titleCn}}</text>
           <image :src=v.coverPath style="width: 300px; height: 256px;"></image>
@@ -52,7 +52,14 @@
         scale: 0.8
       },
       slide_list: [],
+      my_user: [],
     }),
+    watch: {
+        user: function (Val) {
+          this.my_user = Val;
+        }
+    },
+    props: ['user'],
     created() {
       var _this = this;
       this.$fetch({
@@ -67,33 +74,36 @@
           // 错误回调
 
           console.log(error)
-      })
+      });
+      
     },
     methods: {
       wxcEpSliderCurrentIndexSelected (e) {
         const index = e.currentIndex;
         console.log(index);
       },
-      wxcPanItemClicked (film, name, click) {
-        var _this = this;
-        this.$router.open({
-            name: 'Play',
-            params: film,
-        }),
+      play_clicked (film, name, click, genreTypes, user) {
         this.$fetch({
           method: 'GET',    // 大写
           url: 'http://111.231.204.71:5000/Click',
           data: {
             click_name : name,
             click_count : click,
+            click_genreTypes: genreTypes,
+            click_user : user
           } 
         }).then(resData => {
             // 成功回调
             film.click = resData.click
+            this.user = resData.user
             console.log(resDate)
         }, error => {
             // 错误回调
             console.log(error)
+        })
+        this.$router.open({
+            name: 'Play',
+            params: film,
         })
       },
     }
